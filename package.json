@@ -1,0 +1,9 @@
+{
+  "name": "automation-testing-framework",
+  "version": "1.0.0",
+  "description": "A automation testing framework",
+  "main": "index.js",
+  "repository": "https://github.com/zee7han/automation-testing-framework.git",
+  "author": "Mohammad Zeeshan <zee7han@gmail.com>",
+  "license": "MIT"
+}
