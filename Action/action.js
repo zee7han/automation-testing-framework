@@ -1,31 +1,155 @@
 "use strict";
 
 var wd = require('wd');
-    Q = require('q');
+var WdAndroid = require('wd-android');
+var asserters = wd.asserters;
 var xpath = require('../Data/xpath.js');
-var driverScript = require('../DriverScript.js');
-var appiumDriver = driverScript.appiumDriver;
-var methods = [];
+var drScript = require('../DriverScript.js');
 
 
-var click = function(element){
-  var opts = appiumDriver.findElementByXPath(xpath[element]);
-  opts.click();
+
+var waitTillElementAppearFn = function(driver, element, dataSet){
+  try {
+  var el = xpath[element];
+  console.log(el);
+  return driver.waitForElementByXPath(el, asserters.isDisplayed, 10000, 100);
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
 }
 
-var swipe = function (element) {
-  var opts = appiumDriver.findElementByXPath(xpath[element]);
-  var action = new wd.TouchAction();
-  action
-    .press({x: opts.startX, y: opts.startY})
-    .wait(opts.duration)
-    .moveTo({x: opts.endX, y: opts.endY})
-    .release();
-  return appiumDriver.execute(action);
-};
 
 
-var pinch = function (el) {
+
+var verifyFn = function(driver, element, dataSet){
+  try {
+  var el = driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+  return el;
+  console.log("The element is verify as", el);
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var clickFn = function(driver, element, dataSet){
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  var el = driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+  return el.click();
+  console.log("click the element successfully");
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var quitFn = function(driver, element, dataSet){
+  try{
+  return driver.quit();
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var scrollDownFn = function(driver, element, dataSet){
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  var el =  driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+  return  el.swipe({
+          startX: 0,
+          startY: 0.2,
+          endX: 0,
+          endY: 0.5,
+          duration: 1600
+});
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var scrollUpFn = function(driver, element, dataSet){
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  var el =  driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+  return el.swipe({
+          startX: 0,
+          startY: 0.5,
+          endX: 0,
+          endY: 0.2,
+          duration: 1600
+});
+console.log("scroll up the element successfully");
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var swipeLeftFn = function(driver, element, dataSet){
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  var el  = driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+   return el.swipe({
+        startX: 0.9,
+        startY: 0.5,
+        endX: 0.1,
+        endY: 0.5,
+        duration: 800
+});
+console.log("swipe left the element successfully");
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var swipeRightFn = function(driver, element, dataSet){
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  var el = driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+   return el.swipe({
+        startX: 0.1,
+        startY: 0.5,
+        endX: 0.9,
+        endY: 0.5,
+        duration: 800
+});
+console.log("swipe right the element successfully");
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var pinchFn = function (Driver, element, dataSet) {
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  var el = driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
   return Q.all([
     el.getSize(),
     el.getLocation(),
@@ -44,10 +168,20 @@ var pinch = function (el) {
     m.add(a1, a2);
     return m.perform();
   }.bind(this));
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
 };
 
- var zoom = function (el) {
-  return Q.all([
+
+
+
+ var zoomFn = function (driver, element, dataSet) {
+   try{
+   console.log("the xpath of the element is ", xpath[element]);
+   var el = driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+   return Q.all([
     this.getWindowSize(),
     this.getLocation(el),
   ]).then(function (res) {
@@ -65,9 +199,110 @@ var pinch = function (el) {
     m.add(a1, a2);
     return m.perform();
   }.bind(this));
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
 };
 
 
-methods.push(swipe);
-methods.push(pinch);
-methods.push(zoom);
+
+
+var tapFn = function(driver, element, dataSet){
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  var el =  driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+  return el.tapElement({
+        x: 0.9,
+        y: 0.5
+});
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var sendKeysFn = function(driver, element, dataSet){
+  try{
+  console.log("the xpath of the element is ", xpath[element]);
+  //var text = "Mohammad Zeeshan"
+  var el =  driver.waitForElementByXPath(xpath[element], asserters.isDisplayed, 3000, 20);
+  return el.sendKeys(dataSet);
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var launchFn = function(driver, element, dataSet){
+  try{
+  return driver.launchApp();
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var closeFn = function(driver, element, dataSet){
+  try{
+    return driver.closeApp();
+  }catch(e){
+    console.log("action is fail to run");
+    drScript.result = "FAIL";
+  }
+}
+
+
+
+
+var shakeFn = function(driver, element, dataSet){
+  try{
+  return driver.shake();
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+var resetFn = function(driver, element, dataSet){
+  try{
+  return driver.resetApp();
+}catch(e){
+  console.log("action is fail to run");
+  drScript.result = "FAIL";
+}
+}
+
+
+
+
+module.exports.methods = {
+                  waitTillElementAppear: waitTillElementAppearFn,
+                  verify: verifyFn,
+                  click: clickFn,
+                  quit: quitFn,
+                  scrollDown: scrollDownFn,
+                  scrollUp: scrollUpFn,
+                  swipeLeft: swipeLeftFn,
+                  swipeRight: swipeRightFn,
+                  pinch: pinchFn,
+                  zoom: zoomFn,
+                  tap: tapFn,
+                  sendKeys: sendKeysFn,
+                  launch: launchFn,
+                  close: closeFn,
+                  shake: shakeFn,
+                  reset: resetFn
+                }
